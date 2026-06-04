@@ -2,349 +2,281 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Transformer 50M – générateur de texte</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de texte - Modèle 50.1M</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
-
         body {
-            background: #0a0c12;
-            font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', Roboto, Helvetica, sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background: #f9fafb;
+            color: #111827;
         }
-
-        .chat-container {
-            max-width: 800px;
-            width: 100%;
-            height: 90vh;
-            background: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        .container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
         }
-
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.8rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            background: #ffffff;
-            scroll-behavior: smooth;
+        h1 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
-
-        .user-message {
-            align-self: flex-end;
-            max-width: 80%;
-            background: #1e2a3e;
-            color: white;
-            padding: 0.7rem 1.2rem;
-            border-radius: 24px 24px 4px 24px;
-            font-size: 0.95rem;
-            line-height: 1.45;
-            word-break: break-word;
+        .sub {
+            color: #4b5563;
+            margin-bottom: 2rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 1rem;
         }
-
-        .bot-message {
-            align-self: flex-start;
-            max-width: 85%;
-            color: #1e2a3e;
-            background: transparent;
-            padding: 0.2rem 0;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            word-break: break-word;
-            border-left: 3px solid #e2e8f0;
-            padding-left: 0.9rem;
-            margin-left: 0.2rem;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            color: #6c7a9e;
-            font-size: 0.85rem;
-        }
-        .typing-indicator span {
-            width: 6px;
-            height: 6px;
-            background: #9aa6c1;
-            border-radius: 50%;
-            display: inline-block;
-            animation: blink 1.2s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blink {
-            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-            30% { opacity: 1; transform: translateY(-3px); }
-        }
-
-        .controls {
-            background: #f8fafc;
-            border-top: 1px solid #e9edf2;
-            padding: 1rem 1.5rem 0.8rem 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .slider-group {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            background: #ffffff;
-            padding: 0.4rem 1rem;
-            border-radius: 60px;
-            border: 1px solid #e2e8f0;
-        }
-        .slider-group label {
-            font-size: 0.75rem;
+        label {
             font-weight: 500;
-            color: #334155;
-        }
-        .slider-group span {
-            font-size: 0.8rem;
-            font-weight: 500;
-            background: #f1f5f9;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            color: #0f172a;
-            min-width: 45px;
-            text-align: center;
-        }
-        input[type="range"] {
-            width: 130px;
-            height: 4px;
-            -webkit-appearance: none;
-            background: #cbd5e1;
-            border-radius: 4px;
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #1e2a3e;
-            cursor: pointer;
-        }
-
-        .input-area {
-            background: #f8fafc;
-            border-top: 1px solid #e9edf2;
-            padding: 0.8rem 1.5rem 1.3rem 1.5rem;
-            display: flex;
-            gap: 0.8rem;
-            align-items: flex-end;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
         }
         textarea {
-            flex: 1;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 28px;
-            padding: 0.75rem 1.2rem;
-            font-size: 0.9rem;
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 1rem;
+            font-size: 1rem;
             font-family: inherit;
-            resize: none;
-            outline: none;
-            color: #0f172a;
+            resize: vertical;
+            transition: 0.2s;
         }
         textarea:focus {
-            border-color: #1e2a3e;
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        .slider-container {
+            margin: 1.5rem 0 1rem;
+        }
+        .slider-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .slider-item {
+            flex: 1;
+            min-width: 180px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        .param-value {
+            font-size: 0.85rem;
+            background: #f3f4f6;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            color: #1f2937;
         }
         button {
-            background: #1e2a3e;
-            border: none;
-            border-radius: 40px;
-            padding: 0.7rem 1.3rem;
-            font-weight: 500;
-            font-size: 0.85rem;
+            background: #1e3a8a;
             color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
+            margin: 1rem 0 1.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         button:hover {
-            background: #0f172a;
-            transform: scale(0.97);
+            background: #1e40af;
+            transform: scale(1.02);
         }
         button:disabled {
-            background: #94a3b8;
+            background: #9ca3af;
             cursor: not-allowed;
-            opacity: 0.7;
+            transform: none;
         }
-        .status {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #6c7a9e;
-            padding: 0.4rem 1rem 0.8rem 1rem;
+        .result-box {
             background: #f8fafc;
-            border-top: 1px solid #eef2f6;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            min-height: 120px;
+        }
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error {
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 0.75rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #6b7280;
         }
     </style>
 </head>
 <body>
-<div class="chat-container">
-    <div class="messages-area" id="messageList">
-        <div class="bot-message">
-            ⚡ Modèle Transformer 50M prêt. Écrivez le début d’un texte, ajustez la longueur et la température.
+<div class="container">
+    <h1>✍️ Générateur de texte</h1>
+    <div class="sub">Modèle 50.1M — API Hugging Face Space (raf8101/50.1M)</div>
+
+    <label for="prompt">📝 Votre prompt</label>
+    <textarea id="prompt" rows="3" placeholder="Exemple : Raconte-moi une petite histoire sur un astronaute curieux..."></textarea>
+
+    <div class="slider-container">
+        <div class="slider-row">
+            <div class="slider-item">
+                <label>🔢 Max new tokens <span id="maxTokensValue" class="param-value">110</span></label>
+                <input type="range" id="maxTokens" min="10" max="300" step="5" value="110">
+            </div>
+            <div class="slider-item">
+                <label>🎨 Température (créativité) <span id="tempValue" class="param-value">0.85</span></label>
+                <input type="range" id="temperature" min="0.1" max="1.5" step="0.01" value="0.85">
+            </div>
         </div>
     </div>
 
-    <div class="controls">
-        <div class="slider-group">
-            <label>📏 Tokens max</label>
-            <input type="range" id="maxTokensSlider" min="20" max="250" value="120" step="5">
-            <span id="tokenValue">120</span>
-        </div>
-        <div class="slider-group">
-            <label>🎨 Température</label>
-            <input type="range" id="temperatureSlider" min="0.2" max="1.4" value="0.85" step="0.02">
-            <span id="tempValue">0.85</span>
-        </div>
-    </div>
+    <button id="generateBtn">🚀 Générer le texte</button>
 
-    <div class="input-area">
-        <textarea id="promptInput" rows="1" placeholder="Écrivez le début du texte... (Entrée pour envoyer, Shift+Entrée = retour ligne)"></textarea>
-        <button id="sendButton">✧ Envoyer</button>
-    </div>
-    <div class="status" id="statusMessage">✅ API Hugging Face (certificat corrigé)</div>
+    <label>✨ Texte généré</label>
+    <div id="result" class="result-box">Le résultat apparaîtra ici...</div>
+    <div id="errorMsg" class="error" style="display: none;"></div>
 </div>
+<footer>Appel direct à l'API Gradio — Modèle hébergé sur Hugging Face 🤗</footer>
 
-<script>
-    // URL CORRECTE : remplacer le point par un tiret dans le sous-domaine
-    const API_URL = "https://raf8101-50-1m.hf.space/api/predict";
-    const HF_TOKEN = "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";
+<script type="module">
+    // Import du client Gradio depuis le CDN
+    import { Client } from 'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js';
 
-    const messageContainer = document.getElementById('messageList');
-    const promptTextarea = document.getElementById('promptInput');
-    const sendBtn = document.getElementById('sendButton');
-    const statusSpan = document.getElementById('statusMessage');
-    const maxTokensSlider = document.getElementById('maxTokensSlider');
-    const tokenValueSpan = document.getElementById('tokenValue');
-    const temperatureSlider = document.getElementById('temperatureSlider');
-    const tempValueSpan = document.getElementById('tempValue');
+    // Éléments DOM
+    const promptInput = document.getElementById('prompt');
+    const maxTokensSlider = document.getElementById('maxTokens');
+    const tempSlider = document.getElementById('temperature');
+    const maxTokensValue = document.getElementById('maxTokensValue');
+    const tempValue = document.getElementById('tempValue');
+    const generateBtn = document.getElementById('generateBtn');
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('errorMsg');
 
+    // Mise à jour des affichages des sliders
     maxTokensSlider.addEventListener('input', () => {
-        tokenValueSpan.innerText = maxTokensSlider.value;
+        maxTokensValue.textContent = maxTokensSlider.value;
     });
-    temperatureSlider.addEventListener('input', () => {
-        tempValueSpan.innerText = parseFloat(temperatureSlider.value).toFixed(2);
-    });
-
-    promptTextarea.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = Math.min(100, this.scrollHeight) + 'px';
+    tempSlider.addEventListener('input', () => {
+        tempValue.textContent = parseFloat(tempSlider.value).toFixed(2);
     });
 
-    function addUserMessage(text) {
-        const div = document.createElement('div');
-        div.className = 'user-message';
-        div.textContent = text;
-        messageContainer.appendChild(div);
-        scrollToBottom();
-        return div;
-    }
+    // Variable pour stocker le client connecté (initialisé une fois)
+    let gradioClient = null;
 
-    function addBotMessage(text, isTyping = false) {
-        const div = document.createElement('div');
-        div.className = 'bot-message';
-        if (isTyping) {
-            div.innerHTML = `<div class="typing-indicator">Modèle réfléchit<span></span><span></span><span></span></div>`;
-        } else {
-            div.textContent = text;
-        }
-        messageContainer.appendChild(div);
-        scrollToBottom();
-        return div;
-    }
-
-    function scrollToBottom() {
-        messageContainer.scrollTo({ top: messageContainer.scrollHeight, behavior: 'smooth' });
-    }
-
-    function setLoading(loading) {
-        sendBtn.disabled = loading;
-        if (loading) {
-            sendBtn.innerHTML = '⏳ Génération';
-            statusSpan.innerText = '🧠 Le modèle écrit... (quelques secondes)';
-        } else {
-            sendBtn.innerHTML = '✧ Envoyer';
-            statusSpan.innerText = '✅ Prêt (token + SSL OK)';
-        }
-    }
-
-    async function generateText(prompt, maxTokens, temperature) {
-        setLoading(true);
-        addUserMessage(prompt);
-        promptTextarea.value = '';
-        promptTextarea.style.height = 'auto';
-
-        const tempBotDiv = addBotMessage('', true);
-
+    // Fonction d'initialisation du client
+    async function initClient() {
+        if (gradioClient) return gradioClient;
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${HF_TOKEN}`
-                },
-                body: JSON.stringify({ data: [prompt, maxTokens, temperature] })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            const generatedText = result?.data?.[0];
-            if (!generatedText) throw new Error('Réponse API invalide');
-
-            tempBotDiv.innerHTML = '';
-            tempBotDiv.textContent = generatedText;
-        } catch (error) {
-            console.error('Erreur API :', error);
-            tempBotDiv.innerHTML = '';
-            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez l'URL et le certificat.`;
-            statusSpan.innerText = '⚠️ Échec de la requête';
-        } finally {
-            setLoading(false);
-            scrollToBottom();
+            // Connexion au Space public (pas besoin de token)
+            gradioClient = await Client.connect("raf8101/50.1M");
+            console.log("✅ Client connecté au Space raf8101/50.1M");
+            return gradioClient;
+        } catch (err) {
+            console.error("Erreur de connexion au Space :", err);
+            throw new Error("Impossible de se connecter à l'API. Vérifie ta connexion internet ou si le Space est accessible.");
         }
     }
 
-    sendBtn.addEventListener('click', () => {
-        const rawPrompt = promptTextarea.value.trim();
-        if (rawPrompt === '') {
-            statusSpan.innerText = '✏️ Écrivez quelque chose avant d’envoyer.';
+    // Fonction principale d'appel à l'API
+    async function generateText() {
+        // Réinitialiser les messages d'erreur et affichage
+        errorDiv.style.display = 'none';
+        errorDiv.innerText = '';
+        resultDiv.innerHTML = '<span class="loader"></span> Génération en cours... (peut prendre 15-25 secondes)';
+
+        // Récupérer les valeurs
+        const prompt = promptInput.value.trim();
+        if (!prompt) {
+            resultDiv.innerHTML = '⚠️ Veuillez entrer un prompt.';
             return;
         }
-        const maxTokens = parseInt(maxTokensSlider.value, 10);
-        const temperature = parseFloat(temperatureSlider.value);
-        generateText(rawPrompt, maxTokens, temperature);
+
+        const maxTokens = parseFloat(maxTokensSlider.value);
+        const temperature = parseFloat(tempSlider.value);
+
+        // Désactiver le bouton pendant l'appel
+        generateBtn.disabled = true;
+
+        try {
+            // 1. Connexion / récupération du client
+            const client = await initClient();
+
+            // 2. Appel à l'API avec le bon nom : /generate_text
+            //    Les paramètres : prompt (string), max_new_tokens (float), temperature (float)
+            const prediction = await client.predict("/generate_text", {
+                prompt: prompt,
+                max_new_tokens: maxTokens,
+                temperature: temperature
+            });
+
+            // 3. Le résultat est dans prediction.data (tableau)
+            //    D'après la doc, l'API retourne une seule chaîne (str)
+            const generatedText = prediction.data;
+            if (generatedText && typeof generatedText === 'string') {
+                resultDiv.innerHTML = generatedText;
+            } else if (Array.isArray(generatedText) && generatedText.length > 0) {
+                // Au cas où le retour serait un tableau à un élément
+                resultDiv.innerHTML = generatedText[0];
+            } else {
+                resultDiv.innerHTML = "✅ Texte généré (format inattendu) : " + JSON.stringify(generatedText);
+            }
+        } catch (err) {
+            console.error("Erreur lors de l'appel :", err);
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = `❌ Erreur : ${err.message || "Vérifie la console pour plus de détails"}. Si l'erreur persiste, le Space pourrait être surchargé ou l'API a changé.`;
+            resultDiv.innerHTML = "Une erreur est survenue. Réessaie plus tard.";
+        } finally {
+            generateBtn.disabled = false;
+        }
+    }
+
+    // Événement du bouton
+    generateBtn.addEventListener('click', generateText);
+
+    // Optionnel : pré-initialiser le client au chargement de la page (gain de temps)
+    initClient().catch(err => {
+        console.warn("Pré-initialisation échouée mais l'appel fonctionnera quand même :", err);
+        // Pas d'alerte bloquante, l'appel retentera la connexion
     });
 
-    promptTextarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            if (promptTextarea.value.trim()) sendBtn.click();
-        }
-    });
+    // Petit exemple de prompt par défaut (pour tester)
+    if (!promptInput.value) {
+        promptInput.value = "Raconte-moi une blague courte sur un ordinateur qui apprend à parler.";
+    }
 </script>
 </body>
 </html>
