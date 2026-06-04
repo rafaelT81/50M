@@ -12,367 +12,325 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0b0e1a 0%, #111624 100%);
-            font-family: system-ui, 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
+            background: #0a0c12;
+            font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', Roboto, Helvetica, sans-serif;
+            height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
-        .chat-card {
-            max-width: 1000px;
+        /* Conteneur principal – style "papier" très épuré */
+        .chat-container {
+            max-width: 800px;
             width: 100%;
-            background: rgba(18, 22, 40, 0.85);
-            backdrop-filter: blur(14px);
-            border-radius: 2rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            height: 90vh;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
             transition: all 0.2s;
         }
 
-        .header {
-            padding: 1.2rem 1.8rem;
-            background: rgba(0, 0, 0, 0.35);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .header h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #c0e0ff, #a78bfa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .header p {
-            font-size: 0.8rem;
-            color: #8e9bb5;
-            margin-top: 0.3rem;
-        }
-
-        /* zone des messages */
-        .messages {
-            height: 460px;
+        /* Zone des messages : défilement libre */
+        .messages-area {
+            flex: 1;
             overflow-y: auto;
-            padding: 1.5rem;
+            padding: 1.8rem 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.2rem;
+            background: #ffffff;
+            scroll-behavior: smooth;
         }
 
-        .message {
-            display: flex;
-            gap: 0.8rem;
-            animation: fadeSlide 0.25s ease-out;
-        }
-
-        .user {
-            justify-content: flex-end;
-        }
-
-        .bot {
-            justify-content: flex-start;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #2a2f48;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .user .avatar {
-            background: #4f46e5;
-            order: 1;
-        }
-
-        .bot .avatar {
-            background: #1e293b;
-        }
-
-        .bubble {
-            max-width: 78%;
-            padding: 0.7rem 1.2rem;
-            border-radius: 1.8rem;
-            line-height: 1.45;
-            font-size: 0.95rem;
-            word-break: break-word;
-        }
-
-        .user .bubble {
-            background: #4f46e5;
+        /* Style des messages utilisateur (bulles) */
+        .user-message {
+            align-self: flex-end;
+            max-width: 80%;
+            background: #1e2a3e;
             color: white;
-            border-bottom-right-radius: 0.3rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 24px 24px 4px 24px;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            word-break: break-word;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
         }
 
-        .bot .bubble {
-            background: #1e293b;
-            color: #eef2ff;
-            border-bottom-left-radius: 0.3rem;
-            border: 1px solid #334155;
-        }
-
-        /* contrôles (sliders) */
-        .settings-bar {
-            padding: 0.8rem 1.5rem 0.5rem 1.5rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .settings-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .setting {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: #0f1222;
-            padding: 0.4rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid #2d334f;
-        }
-
-        .setting label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #b9c3e6;
-        }
-
-        .setting input {
-            background: #1a1e30;
-            border: 1px solid #3f4665;
-            border-radius: 1.2rem;
-            padding: 0.3rem 0.7rem;
-            color: #f1f5f9;
-            font-size: 0.85rem;
-            width: 80px;
-            text-align: center;
-        }
-
-        .tooltip-icon {
-            cursor: help;
-            color: #7c88b0;
-            font-size: 0.8rem;
+        /* Messages du bot : pas de bulle, juste du texte simple à gauche */
+        .bot-message {
+            align-self: flex-start;
+            max-width: 85%;
+            color: #1e2a3e;
+            background: transparent;
+            padding: 0.2rem 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-break: break-word;
+            border-left: 3px solid #e2e8f0;
+            padding-left: 0.9rem;
             margin-left: 0.2rem;
         }
 
-        .input-area {
-            padding: 1rem 1.5rem 1.5rem;
-        }
-
-        .input-group {
+        /* État "en train d'écrire" (indicateur léger) */
+        .typing-indicator {
             display: flex;
-            gap: 0.75rem;
-            background: #0f1222;
-            border-radius: 3rem;
-            padding: 0.25rem 0.25rem 0.25rem 1.2rem;
-            border: 1px solid #2d334f;
-            transition: border 0.2s;
+            gap: 6px;
+            align-items: center;
+            color: #6c7a9e;
+            font-size: 0.85rem;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #9aa6c1;
+            border-radius: 50%;
+            display: inline-block;
+            animation: blink 1.2s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-3px); }
         }
 
-        .input-group:focus-within {
-            border-color: #6d63ff;
+        /* Barre de contrôle en bas */
+        .controls {
+            background: #f8fafc;
+            border-top: 1px solid #e9edf2;
+            padding: 1rem 1.5rem 0.8rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .slider-group label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #334155;
+            letter-spacing: -0.2px;
+        }
+        .slider-group span {
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: #f1f5f9;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            color: #0f172a;
+            min-width: 45px;
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 130px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #cbd5e1;
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #1e2a3e;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Zone de saisie + bouton */
+        .input-area {
+            background: #f8fafc;
+            border-top: 1px solid #e9edf2;
+            padding: 0.8rem 1.5rem 1.3rem 1.5rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-end;
+        }
         textarea {
             flex: 1;
-            background: transparent;
-            border: none;
-            padding: 0.8rem 0;
-            font-size: 0.95rem;
-            color: #f1f5f9;
-            outline: none;
-            resize: none;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 28px;
+            padding: 0.75rem 1.2rem;
+            font-size: 0.9rem;
             font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border 0.2s;
+            color: #0f172a;
         }
-
-        textarea::placeholder {
-            color: #5b678b;
+        textarea:focus {
+            border-color: #1e2a3e;
         }
-
         button {
-            background: #4f46e5;
+            background: #1e2a3e;
             border: none;
-            border-radius: 2rem;
-            padding: 0 1.3rem;
-            font-weight: 600;
+            border-radius: 40px;
+            padding: 0.7rem 1.3rem;
+            font-weight: 500;
+            font-size: 0.85rem;
             color: white;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-
-        button:hover:not(:disabled) {
-            background: #6c63ff;
+        button:hover {
+            background: #0f172a;
             transform: scale(0.97);
         }
-
         button:disabled {
-            opacity: 0.5;
+            background: #94a3b8;
             cursor: not-allowed;
+            opacity: 0.7;
         }
-
         .status {
             text-align: center;
             font-size: 0.7rem;
-            color: #8e9bb5;
-            margin-top: 0.8rem;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* petites infos */
-        .info-text {
-            font-size: 0.7rem;
-            color: #6a759b;
-            text-align: center;
-            margin-top: 0.6rem;
+            color: #6c7a9e;
+            padding: 0.4rem 1rem 0.8rem 1rem;
+            background: #f8fafc;
+            border-top: 1px solid #eef2f6;
         }
     </style>
 </head>
 <body>
-<div class="chat-card">
-    <div class="header">
-        <h1>⚡ Transformer 50M</h1>
-        <p>Modèle custom · décodeur seul · 50M paramètres</p>
-    </div>
-
-    <div class="messages" id="messageList">
-        <div class="message bot">
-            <div class="avatar">🤖</div>
-            <div class="bubble">Salut ! Donne-moi le début d’une phrase, je continuerai. Tu peux régler la longueur et la créativité avec les curseurs ci-dessous.</div>
+<div class="chat-container">
+    <!-- zone d'affichage des messages -->
+    <div class="messages-area" id="messageList">
+        <div class="bot-message">
+            ⚡ Modèle Transformer 50M prêt. Écrivez le début d’un texte, ajustez la longueur et la température.
         </div>
     </div>
 
-    <div class="settings-bar">
-        <div class="settings-row">
-            <div class="setting">
-                <label>📏 Tokens max <span class="tooltip-icon" title="Nombre de caractères (approx.) générés. Plus c’est long, plus le texte est développé.">ⓘ</span></label>
-                <input type="number" id="maxTokens" min="10" max="250" value="110" step="10">
-            </div>
-            <div class="setting">
-                <label>🎨 Température <span class="tooltip-icon" title="Créativité. Faible = conservateur / prévisible. Élevée = surprenant, parfois moins cohérent.">ⓘ</span></label>
-                <input type="number" id="temperature" min="0.2" max="1.4" value="0.85" step="0.05">
-            </div>
+    <!-- réglages (curseurs) -->
+    <div class="controls">
+        <div class="slider-group">
+            <label>📏 Tokens max</label>
+            <input type="range" id="maxTokensSlider" min="20" max="250" value="120" step="5">
+            <span id="tokenValue">120</span>
         </div>
-        <div class="info-text">
-            💡 Tokens max = longueur approximative · Température haute = plus d’imagination
+        <div class="slider-group">
+            <label>🎨 Température</label>
+            <input type="range" id="temperatureSlider" min="0.2" max="1.4" value="0.85" step="0.02">
+            <span id="tempValue">0.85</span>
         </div>
     </div>
 
+    <!-- saisie utilisateur -->
     <div class="input-area">
-        <div class="input-group">
-            <textarea id="promptInput" rows="1" placeholder="Écris le début du texte... (ex: « Il était une fois »)"></textarea>
-            <button id="sendButton">➤ Générer</button>
-        </div>
-        <div class="status" id="statusMessage">✅ Prêt · API Gradio connectée</div>
+        <textarea id="promptInput" rows="1" placeholder="Écrivez le début du texte... (Entrée pour envoyer, Shift+Entrée = retour ligne)"></textarea>
+        <button id="sendButton">✧ Envoyer</button>
     </div>
+    <div class="status" id="statusMessage">✅ API Hugging Face connectée</div>
 </div>
 
 <script>
-    // ---- CONFIGURATION UNIQUE ----
-    // URL API Gradio de ton Space Hugging Face (mets à jour si besoin)
-    const API_URL = "https://raf8101-50M.hf.space/api/predict";
-    // -----------------------------
+    // --------------------------------------------------------------
+    // 1. Configuration de l'API Gradio (mettre à jour si besoin)
+    // --------------------------------------------------------------
+    const API_URL = "https://raf8101-50.1m.hf.space/api/predict";
 
+    // Éléments DOM
     const messageContainer = document.getElementById('messageList');
     const promptTextarea = document.getElementById('promptInput');
     const sendBtn = document.getElementById('sendButton');
-    const statusDiv = document.getElementById('statusMessage');
+    const statusSpan = document.getElementById('statusMessage');
 
-    const maxTokensInput = document.getElementById('maxTokens');
-    const temperatureInput = document.getElementById('temperature');
+    const maxTokensSlider = document.getElementById('maxTokensSlider');
+    const tokenValueSpan = document.getElementById('tokenValue');
+    const temperatureSlider = document.getElementById('temperatureSlider');
+    const tempValueSpan = document.getElementById('tempValue');
 
-    // Auto-adaptation hauteur textarea
-    promptTextarea.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = Math.min(120, this.scrollHeight) + 'px';
+    // Mise à jour affichage curseurs
+    maxTokensSlider.addEventListener('input', () => {
+        tokenValueSpan.innerText = maxTokensSlider.value;
+    });
+    temperatureSlider.addEventListener('input', () => {
+        tempValueSpan.innerText = parseFloat(temperatureSlider.value).toFixed(2);
     });
 
-    function addMessage(text, isUser) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.textContent = isUser ? '👤' : '🤖';
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        bubble.textContent = text;
-        msgDiv.appendChild(avatar);
-        msgDiv.appendChild(bubble);
-        messageContainer.appendChild(msgDiv);
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-        return bubble;
+    // Ajustement hauteur automatique du textarea
+    promptTextarea.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = Math.min(100, this.scrollHeight) + 'px';
+    });
+
+    // Ajouter un message utilisateur (bulle)
+    function addUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'user-message';
+        div.textContent = text;
+        messageContainer.appendChild(div);
+        scrollToBottom();
+        return div;
     }
 
+    // Ajouter un message du bot (sans bulle, simple texte)
+    function addBotMessage(text, isTypingPlaceholder = false) {
+        const div = document.createElement('div');
+        div.className = 'bot-message';
+        if (isTypingPlaceholder) {
+            div.innerHTML = `<div class="typing-indicator">Modèle réfléchit<span></span><span></span><span></span></div>`;
+        } else {
+            div.textContent = text;
+        }
+        messageContainer.appendChild(div);
+        scrollToBottom();
+        return div;
+    }
+
+    function scrollToBottom() {
+        messageContainer.scrollTo({ top: messageContainer.scrollHeight, behavior: 'smooth' });
+    }
+
+    // État de chargement
     function setLoading(loading) {
         sendBtn.disabled = loading;
         if (loading) {
-            sendBtn.innerHTML = '<span class="loader"></span> Génération';
-            statusDiv.innerHTML = '⏳ Le modèle réfléchit (CPU, peut prendre 10-20 secondes)';
+            sendBtn.innerHTML = '⏳ Génération';
+            statusSpan.innerText = '🧠 Le modèle écrit... (CPU, quelques secondes)';
         } else {
-            sendBtn.innerHTML = '➤ Générer';
-            statusDiv.innerHTML = '✅ Prêt · API connectée';
+            sendBtn.innerHTML = '✧ Envoyer';
+            statusSpan.innerText = '✅ Prêt · API active';
         }
     }
 
+    // Appel à l'API Gradio
     async function generateText(prompt, maxTokens, temperature) {
         setLoading(true);
-        // Afficher le message utilisateur
-        addMessage(prompt, true);
+        addUserMessage(prompt);                // bulle utilisateur
         promptTextarea.value = '';
         promptTextarea.style.height = 'auto';
 
-        // Bulle temporaire pour le bot
-        const tempBotMsg = addMessage('🤔 Génération en cours...', false);
+        // Message temporaire du bot (indicateur de réflexion)
+        const tempBotDiv = addBotMessage('', true);   // affiche "Modèle réfléchit..."
 
         try {
-            // Corps de la requête pour l'API Gradio standard (espace HF)
-            const payload = {
-                data: [prompt, maxTokens, temperature]
-            };
-
+            const payload = { data: [prompt, maxTokens, temperature] };
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -382,34 +340,37 @@
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status} - ${response.statusText}`);
             }
-
             const result = await response.json();
-            // La réponse Gradio est généralement { data: ["texte généré"] }
-            const generated = result?.data?.[0];
-            if (!generated) throw new Error('Réponse API inattendue (pas de data)');
-            tempBotMsg.textContent = generated;
+            const generatedText = result?.data?.[0];
+            if (!generatedText) throw new Error('Réponse API invalide (pas de data)');
+
+            // remplacer le message temporaire par le vrai texte (sans bulle)
+            tempBotDiv.innerHTML = '';   // efface l'indicateur
+            tempBotDiv.textContent = generatedText;
         } catch (error) {
             console.error('Erreur API :', error);
-            tempBotMsg.textContent = `❌ Erreur : ${error.message}. Vérifie que l'API Gradio est active (Space "Running").`;
-            statusDiv.innerHTML = '⚠️ Échec connexion API';
+            tempBotDiv.innerHTML = '';   // supprime l'indicateur
+            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez que le Space est en "Running".`;
+            statusSpan.innerText = '⚠️ Échec connexion API';
         } finally {
             setLoading(false);
+            scrollToBottom();
         }
     }
 
+    // Événement d'envoi
     sendBtn.addEventListener('click', () => {
         const rawPrompt = promptTextarea.value.trim();
         if (rawPrompt === '') {
-            statusDiv.innerHTML = '✏️ Écris un prompt avant de générer.';
+            statusSpan.innerText = '✏️ Écrivez quelque chose avant d’envoyer.';
             return;
         }
-        const maxTokens = parseInt(maxTokensInput.value, 10);
-        let temperature = parseFloat(temperatureInput.value);
-        if (isNaN(temperature)) temperature = 0.85;
+        const maxTokens = parseInt(maxTokensSlider.value, 10);
+        const temperature = parseFloat(temperatureSlider.value);
         generateText(rawPrompt, maxTokens, temperature);
     });
 
-    // Envoyer avec Entrée (Shift+Enter pour retour à la ligne)
+    // Envoyer avec Entrée (Shift+Entrée pour retour à la ligne)
     promptTextarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -417,24 +378,20 @@
         }
     });
 
-    // Petit test au chargement pour vérifier si l'API répond (optionnel)
-    async function testApiConnection() {
+    // Petit test de connexion à l'API au chargement (optionnel, silencieux)
+    async function testApiAvailability() {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            const res = await fetch(API_URL, { method: 'OPTIONS', signal: controller.signal });
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            await fetch(API_URL, { method: 'OPTIONS', signal: controller.signal });
             clearTimeout(timeoutId);
-            if (res.ok || res.status === 405) {
-                statusDiv.innerHTML = '✅ API Gradio accessible · prêt à générer';
-            } else {
-                statusDiv.innerHTML = '⚠️ API accessible mais réponse inattendue (peut fonctionner quand même)';
-            }
+            statusSpan.innerText = '✅ API opérationnelle · prêt à générer';
         } catch (err) {
-            console.warn('Test connexion API :', err);
-            statusDiv.innerHTML = '🔄 API non joignable ? Le Space est-il "Running" ? Les requêtes échoueront.';
+            console.warn('Test API :', err);
+            statusSpan.innerText = '⚠️ API injoignable ? Vérifiez que le Space est "Running"';
         }
     }
-    testApiConnection();
+    testApiAvailability();
 </script>
 </body>
 </html>
