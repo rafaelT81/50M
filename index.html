@@ -22,7 +22,6 @@
             padding: 1rem;
         }
 
-        /* Conteneur principal – style "papier" très épuré */
         .chat-container {
             max-width: 800px;
             width: 100%;
@@ -33,10 +32,8 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: all 0.2s;
         }
 
-        /* Zone des messages : défilement libre */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -48,7 +45,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Style des messages utilisateur (bulles) */
         .user-message {
             align-self: flex-end;
             max-width: 80%;
@@ -59,10 +55,8 @@
             font-size: 0.95rem;
             line-height: 1.45;
             word-break: break-word;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
         }
 
-        /* Messages du bot : pas de bulle, juste du texte simple à gauche */
         .bot-message {
             align-self: flex-start;
             max-width: 85%;
@@ -77,7 +71,6 @@
             margin-left: 0.2rem;
         }
 
-        /* État "en train d'écrire" (indicateur léger) */
         .typing-indicator {
             display: flex;
             gap: 6px;
@@ -100,7 +93,6 @@
             30% { opacity: 1; transform: translateY(-3px); }
         }
 
-        /* Barre de contrôle en bas */
         .controls {
             background: #f8fafc;
             border-top: 1px solid #e9edf2;
@@ -120,13 +112,11 @@
             padding: 0.4rem 1rem;
             border-radius: 60px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
         .slider-group label {
             font-size: 0.75rem;
             font-weight: 500;
             color: #334155;
-            letter-spacing: -0.2px;
         }
         .slider-group span {
             font-size: 0.8rem;
@@ -146,9 +136,6 @@
             border-radius: 4px;
             outline: none;
         }
-        input[type="range"]:focus {
-            outline: none;
-        }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 14px;
@@ -156,10 +143,8 @@
             border-radius: 50%;
             background: #1e2a3e;
             cursor: pointer;
-            border: none;
         }
 
-        /* Zone de saisie + bouton */
         .input-area {
             background: #f8fafc;
             border-top: 1px solid #e9edf2;
@@ -178,7 +163,6 @@
             font-family: inherit;
             resize: none;
             outline: none;
-            transition: border 0.2s;
             color: #0f172a;
         }
         textarea:focus {
@@ -194,9 +178,6 @@
             color: white;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         button:hover {
             background: #0f172a;
@@ -219,14 +200,12 @@
 </head>
 <body>
 <div class="chat-container">
-    <!-- zone d'affichage des messages -->
     <div class="messages-area" id="messageList">
         <div class="bot-message">
             ⚡ Modèle Transformer 50M prêt. Écrivez le début d’un texte, ajustez la longueur et la température.
         </div>
     </div>
 
-    <!-- réglages (curseurs) -->
     <div class="controls">
         <div class="slider-group">
             <label>📏 Tokens max</label>
@@ -240,32 +219,27 @@
         </div>
     </div>
 
-    <!-- saisie utilisateur -->
     <div class="input-area">
         <textarea id="promptInput" rows="1" placeholder="Écrivez le début du texte... (Entrée pour envoyer, Shift+Entrée = retour ligne)"></textarea>
         <button id="sendButton">✧ Envoyer</button>
     </div>
-    <div class="status" id="statusMessage">✅ API Hugging Face connectée</div>
+    <div class="status" id="statusMessage">✅ API Hugging Face avec token</div>
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    // 1. Configuration de l'API Gradio (mettre à jour si besoin)
-    // --------------------------------------------------------------
+    // Configuration de l'API
     const API_URL = "https://raf8101-50.1m.hf.space/api/predict";
+    const HF_TOKEN = "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"; // ⚠️ À garder secret normalement (exposé ici pour démo)
 
-    // Éléments DOM
     const messageContainer = document.getElementById('messageList');
     const promptTextarea = document.getElementById('promptInput');
     const sendBtn = document.getElementById('sendButton');
     const statusSpan = document.getElementById('statusMessage');
-
     const maxTokensSlider = document.getElementById('maxTokensSlider');
     const tokenValueSpan = document.getElementById('tokenValue');
     const temperatureSlider = document.getElementById('temperatureSlider');
     const tempValueSpan = document.getElementById('tempValue');
 
-    // Mise à jour affichage curseurs
     maxTokensSlider.addEventListener('input', () => {
         tokenValueSpan.innerText = maxTokensSlider.value;
     });
@@ -273,13 +247,11 @@
         tempValueSpan.innerText = parseFloat(temperatureSlider.value).toFixed(2);
     });
 
-    // Ajustement hauteur automatique du textarea
     promptTextarea.addEventListener('input', function () {
         this.style.height = 'auto';
         this.style.height = Math.min(100, this.scrollHeight) + 'px';
     });
 
-    // Ajouter un message utilisateur (bulle)
     function addUserMessage(text) {
         const div = document.createElement('div');
         div.className = 'user-message';
@@ -289,11 +261,10 @@
         return div;
     }
 
-    // Ajouter un message du bot (sans bulle, simple texte)
-    function addBotMessage(text, isTypingPlaceholder = false) {
+    function addBotMessage(text, isTyping = false) {
         const div = document.createElement('div');
         div.className = 'bot-message';
-        if (isTypingPlaceholder) {
+        if (isTyping) {
             div.innerHTML = `<div class="typing-indicator">Modèle réfléchit<span></span><span></span><span></span></div>`;
         } else {
             div.textContent = text;
@@ -307,58 +278,56 @@
         messageContainer.scrollTo({ top: messageContainer.scrollHeight, behavior: 'smooth' });
     }
 
-    // État de chargement
     function setLoading(loading) {
         sendBtn.disabled = loading;
         if (loading) {
             sendBtn.innerHTML = '⏳ Génération';
-            statusSpan.innerText = '🧠 Le modèle écrit... (CPU, quelques secondes)';
+            statusSpan.innerText = '🧠 Le modèle écrit... (quelques secondes)';
         } else {
             sendBtn.innerHTML = '✧ Envoyer';
-            statusSpan.innerText = '✅ Prêt · API active';
+            statusSpan.innerText = '✅ Prêt (token authentifié)';
         }
     }
 
-    // Appel à l'API Gradio
     async function generateText(prompt, maxTokens, temperature) {
         setLoading(true);
-        addUserMessage(prompt);                // bulle utilisateur
+        addUserMessage(prompt);
         promptTextarea.value = '';
         promptTextarea.style.height = 'auto';
 
-        // Message temporaire du bot (indicateur de réflexion)
-        const tempBotDiv = addBotMessage('', true);   // affiche "Modèle réfléchit..."
+        const tempBotDiv = addBotMessage('', true);
 
         try {
-            const payload = { data: [prompt, maxTokens, temperature] };
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${HF_TOKEN}`
+                },
+                body: JSON.stringify({ data: [prompt, maxTokens, temperature] })
             });
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status} - ${response.statusText}`);
             }
+
             const result = await response.json();
             const generatedText = result?.data?.[0];
-            if (!generatedText) throw new Error('Réponse API invalide (pas de data)');
+            if (!generatedText) throw new Error('Réponse API invalide');
 
-            // remplacer le message temporaire par le vrai texte (sans bulle)
-            tempBotDiv.innerHTML = '';   // efface l'indicateur
+            tempBotDiv.innerHTML = '';
             tempBotDiv.textContent = generatedText;
         } catch (error) {
             console.error('Erreur API :', error);
-            tempBotDiv.innerHTML = '';   // supprime l'indicateur
-            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez que le Space est en "Running".`;
-            statusSpan.innerText = '⚠️ Échec connexion API';
+            tempBotDiv.innerHTML = '';
+            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez que le Space est bien "Running".`;
+            statusSpan.innerText = '⚠️ Échec de la requête';
         } finally {
             setLoading(false);
             scrollToBottom();
         }
     }
 
-    // Événement d'envoi
     sendBtn.addEventListener('click', () => {
         const rawPrompt = promptTextarea.value.trim();
         if (rawPrompt === '') {
@@ -370,28 +339,12 @@
         generateText(rawPrompt, maxTokens, temperature);
     });
 
-    // Envoyer avec Entrée (Shift+Entrée pour retour à la ligne)
     promptTextarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             if (promptTextarea.value.trim()) sendBtn.click();
         }
     });
-
-    // Petit test de connexion à l'API au chargement (optionnel, silencieux)
-    async function testApiAvailability() {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
-            await fetch(API_URL, { method: 'OPTIONS', signal: controller.signal });
-            clearTimeout(timeoutId);
-            statusSpan.innerText = '✅ API opérationnelle · prêt à générer';
-        } catch (err) {
-            console.warn('Test API :', err);
-            statusSpan.innerText = '⚠️ API injoignable ? Vérifiez que le Space est "Running"';
-        }
-    }
-    testApiAvailability();
 </script>
 </body>
 </html>
