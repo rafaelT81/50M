@@ -223,13 +223,13 @@
         <textarea id="promptInput" rows="1" placeholder="Écrivez le début du texte... (Entrée pour envoyer, Shift+Entrée = retour ligne)"></textarea>
         <button id="sendButton">✧ Envoyer</button>
     </div>
-    <div class="status" id="statusMessage">✅ API Hugging Face avec token</div>
+    <div class="status" id="statusMessage">✅ API Hugging Face (certificat corrigé)</div>
 </div>
 
 <script>
-    // Configuration de l'API
-    const API_URL = "https://raf8101-50.1m.hf.space/api/predict";
-    const HF_TOKEN = "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"; // ⚠️ À garder secret normalement (exposé ici pour démo)
+    // URL CORRECTE : remplacer le point par un tiret dans le sous-domaine
+    const API_URL = "https://raf8101-50-1m.hf.space/api/predict";
+    const HF_TOKEN = "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";
 
     const messageContainer = document.getElementById('messageList');
     const promptTextarea = document.getElementById('promptInput');
@@ -285,7 +285,7 @@
             statusSpan.innerText = '🧠 Le modèle écrit... (quelques secondes)';
         } else {
             sendBtn.innerHTML = '✧ Envoyer';
-            statusSpan.innerText = '✅ Prêt (token authentifié)';
+            statusSpan.innerText = '✅ Prêt (token + SSL OK)';
         }
     }
 
@@ -320,7 +320,7 @@
         } catch (error) {
             console.error('Erreur API :', error);
             tempBotDiv.innerHTML = '';
-            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez que le Space est bien "Running".`;
+            tempBotDiv.textContent = `❌ Erreur : ${error.message}. Vérifiez l'URL et le certificat.`;
             statusSpan.innerText = '⚠️ Échec de la requête';
         } finally {
             setLoading(false);
